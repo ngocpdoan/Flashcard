@@ -8,52 +8,70 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button addButton;
+    FlashcardDatabase flashcardDatabase;
+    List<Flashcard> allFlashcards;
+    int currentCardDisplayedIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        flashcardDatabase = new FlashcardDatabase(getApplicationContext());
+        allFlashcards = flashcardDatabase.getAllCards();
+        if (allFlashcards != null && allFlashcards.size() > 0) {
+            ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(0).getQuestion());
+            ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(0).getAnswer());
+        }
 
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+
+        findViewById(R.id.flashcard_question).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 findViewById(R.id.flashcard_answer).setVisibility(View.VISIBLE);
-                findViewById(R.id.flashcard_wronganswer).setVisibility(View.VISIBLE);
-                findViewById(R.id.flashcard_wronganswer2).setVisibility(View.VISIBLE);
+                findViewById(R.id.flashcard_question).setVisibility(View.INVISIBLE);
             }
         });
 
         findViewById(R.id.flashcard_answer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView rightAnswer = (TextView)findViewById(R.id.flashcard_answer);
-                rightAnswer.setTextColor(getResources().getColor(R.color.green));
-                findViewById(R.id.flashcard_question).setBackgroundColor(getResources().getColor(R.color.green));
+                findViewById(R.id.flashcard_question).setVisibility(View.VISIBLE);
+                findViewById(R.id.flashcard_answer).setVisibility(View.INVISIBLE);
             }
         });
 
-        findViewById(R.id.flashcard_wronganswer).setOnClickListener(new View.OnClickListener() {
+
+        findViewById(R.id.button5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView wrongAnswer = (TextView)findViewById(R.id.flashcard_wronganswer);
-                wrongAnswer.setTextColor(getResources().getColor(R.color.red));
-                TextView rightAnswer = (TextView)findViewById(R.id.flashcard_answer);
-                rightAnswer.setBackgroundColor(getResources().getColor(R.color.green));
+                // advance our pointer index so we can show the next card
+                currentCardDisplayedIndex++;
+
+                // make sure we don't get an IndexOutOfBoundsError if we are viewing the last indexed card in our list
+                if (currentCardDisplayedIndex > allFlashcards.size() - 1) {
+                    currentCardDisplayedIndex = 0;
+                }
+
+                // set the question and answer TextViews with data from the database
+                ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
+                ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
             }
         });
 
-        findViewById(R.id.flashcard_wronganswer2).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button7).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView wrongAnswer2 = (TextView)findViewById(R.id.flashcard_wronganswer2);
-                wrongAnswer2.setTextColor(getResources().getColor(R.color.red));
-                TextView rightAnswer = (TextView)findViewById(R.id.flashcard_answer);
-                rightAnswer.setBackgroundColor(getResources().getColor(R.color.green));
+                flashcardDatabase.deleteCard(((TextView) findViewById(R.id.flashcard_question)).getText().toString());
+                allFlashcards = flashcardDatabase.getAllCards();
             }
         });
+
 
         addButton = (Button) findViewById(R.id.button2);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
             newQuestion.setText(string1);
             TextView newAnswer = (TextView)findViewById(R.id.flashcard_answer);
             newAnswer.setText(string2);
+
+            flashcardDatabase.insertCard(new Flashcard(string1, string2));
+            allFlashcards = flashcardDatabase.getAllCards();
         }
     }
 

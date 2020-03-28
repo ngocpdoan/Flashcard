@@ -1,5 +1,24 @@
 ## Flashcard App
 
+## Lab 4
+
+### App Description
+This is an Android flashcard app for CodePath 2020 that allows the user to create flashcards with questions and answers, saves cards to a database, flip through and delete previous cards, and displays the information with transitions and animations.
+
+### App Walk-though
+<img src="https://i.imgur.com/7LlmgdK.gif" width=200><br>
+
+## Required
+- [x] User sees a transition animation when going from the main screen to the add card screen.
+- [x] User sees a reveal animation when the flashcard is tapped and the answer is shown
+- [x] User sees flashcards animating in / out when the 'next' button is tapped
+
+## Optional
+- [ ] Extra styling is added!
+- [ ] User sees a countdown timer for each question
+- [ ] User sees a 'card flip' animation when the card is tapped
+- [ ] User sees a celebration animation with confetti when they answer a question correctly
+
 ## Lab 3
 
 ### App Description
